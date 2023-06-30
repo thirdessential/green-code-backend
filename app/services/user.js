@@ -5,7 +5,8 @@ const opts = { toJSON: { virtuals: true } };
 const shortid = require("shortid");
 const mongoose = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate");
-const { isEmail } = require("validator")
+const { isEmail } = require("validator");
+const { hashPassword, hashChangePassword } = require('../utility');
 const User = new mongoose.Schema({
   _id: {
     type: String,
@@ -16,10 +17,7 @@ const User = new mongoose.Schema({
     type: String,
     required: true
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
+  email: {type: String, trim: true, index: true, unique: [true," user already registered with this email"], sparse: true,
     validate: [isEmail, 'invalid email']
   },
   emailVerified: {
@@ -35,15 +33,9 @@ const User = new mongoose.Schema({
      
   },
 
-  phone: {
-    type: String,
-    unique: true,
-    required: true,
-
-  },
+  phone:{type: String, trim: true, index: true, unique: [true," user already registered with this number"], sparse: true},
   userType: {
     type: String,
-    required: true,
     enum: ["buyer", "seller","admin"]
 
   },
@@ -59,70 +51,82 @@ const User = new mongoose.Schema({
   
   role:{
     type: String,
-    default:"individual",
     enum: ["enterprise", "individual"]
   },
   password:{
     type: String,
-    required: true
   },
   package:{
     type: String,
-    required: true
+ 
   },
   paymentMode:{
     type: String,
-    required: true
+ 
   },
   enterpriseName:{
     type: String,
-    required: true
+ 
   },
   registrationNumber:{
     type: String,
-    required: true
+   
+  },
+  provider:{
+    type: String,
+    default:"default"
+   
+  },
+  uid:{
+    type: String,
+   
   }
-
 }, { timestamps: true })
 
 User.plugin(mongoosePaginate);
+
 const Model= db.model("Users",User)
 
-// const initialRoles = [
-//  {name:"admin", email:"admin@greenCode.com", emailVerified:true,}
-   
-// ];
-// Model.countDocuments((err, count) => {
-//   if (err) {
-//     console.log(err);
-//     return;
-//   }
-
-//   if (count === 0) {
-//     Model.insertMany(initialRoles, (err, roles) => {
-//       if (err) {
-//         console.log(err);
-//         return;
-//       }
-//       console.log(`${roles.length} roles have been created.`);
-//     });
-//   } else {
-//     console.log('Roles already exist.');
-//   }
-// });
 
 async function create(fields) {
-  const existingModel = await getById(fields._id);
-  if (existingModel) return existingModel;
-
   const model = new Model(fields);
   if (fields.password)
     await hashPassword(model);
   await model.save()
   return model;
 }
+async function getById(_id) {
+  const model = await Model.findOne(
+    { _id },
+  );
+  return model;
+}
+async function getUserByUsername(username) {
+  const model = await Model.findOne(
+   { $or: [{ phone: username }, { email: username }]}
+  );
+  return model;
+}
+
+const edit= async (id,change)=>{
+
+  const model = await getById(id);
+
+  if (change.password){
+        await hashChangePassword(change);
+  }
+  Object.keys(change).forEach(key => {
+
+    model[key] = change[key]
+  });
+  await model.save();
+  return model;
+}
 
 module.exports = {
   create,
+  getUserByUsername,
+  edit,
+  getById,
   model: Model
 }
