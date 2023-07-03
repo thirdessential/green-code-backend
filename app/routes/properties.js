@@ -4,5 +4,7 @@ const router = require('express').Router()
 // router.get('/',authenticateJWT, users.getMe)
 router.post('/',authenticateJWTAdmin,properties.addProperties)
 router.get('/',properties.listProperties)
+router.get('/getByType',properties.listPropertiesByType)
+router.get('/getById/:id',properties.getProperty)
 router.put('/:id',authenticateJWTAdmin ,properties.editProperties)
 module.exports = router

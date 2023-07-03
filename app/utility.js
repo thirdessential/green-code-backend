@@ -17,15 +17,15 @@ async function signJwt(user){
  const  token = await  jwt.sign(
     { userId: user.id, email:  user?.email??user?.email,phone:user?.phone??user?.phone,role:user.userType },
     JWT_SECRET,
-    { expiresIn: "1d" })
-
+    { expiresIn: "1d" }
+    )
     return token
 }
  
 const GenrateOtp =()=>{
  return  otpGenerator.generate(6, { lowerCaseAlphabets:false,upperCaseAlphabets: false, specialChars: false,digits:true });
 
-}
+} 
 
 
 module.exports={

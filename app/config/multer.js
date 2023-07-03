@@ -19,7 +19,7 @@ const checkFileType = function (file, cb) {
 const storageEngine = multer.diskStorage({
     destination: "./app/public",
     filename: (req, file, cb) => {
-      cb(null, `${Date.now()}--${file.originalname}`);
+      cb(null, `${file.originalname}`);
     },
   });
 

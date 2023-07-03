@@ -8,6 +8,15 @@ const multer = require("multer");
 const upload = require('./config/multer');
 const properties = require('./routes/properties.js');
 app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000'
+}));
+
+// Allow all methods and headers
+app.use(cors({
+  methods: 'GET, POST, PUT, DELETE',
+  allowedHeaders: 'Content-Type, Authorization'
+}));
 app.use('/public',express.static(__dirname + '/public'));
 app.use(pino)
 app.get('/', (req,res)=>{
