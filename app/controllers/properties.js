@@ -1,9 +1,8 @@
 const propertiesService = require("../services/properties");
-
+const axios = require("axios");
 const listProperties = async (req, res) => {
   try {
     const properties = await propertiesService.list();
-    // const product = await getProduct(id)
     res.json({
       properties,
     });
@@ -13,11 +12,11 @@ const listProperties = async (req, res) => {
   }
 };
 const listPropertiesByType = async (req, res) => {
-    console.log(req.params)
+  console.log(req.query);
   try {
-   const {query}=req
+    const { query } = req;
     const properties = await propertiesService.listByType(query);
-   
+
     // const product = await getProduct(id)
     res.status(201).send({
       properties,
@@ -28,11 +27,9 @@ const listPropertiesByType = async (req, res) => {
   }
 };
 const getProperty = async (req, res) => {
-  console.log("get by id");
   try {
     const property = await propertiesService.getById(req.params.id);
-    // const product = await getProduct(id)
-  res.status(201).send({
+    res.status(201).send({
       property,
     });
   } catch (err) {
@@ -42,7 +39,6 @@ const getProperty = async (req, res) => {
 };
 const addProperties = async (req, res) => {
   try {
-  
     const { body } = req;
     const property = await propertiesService.create(body);
     res.status(200).json(property);
@@ -64,10 +60,32 @@ const editProperties = async (req, res) => {
   }
 };
 
+// const priceEvaluation = async (req, res) => {
+//   try {
+//     const { query, headers } = req;
+//     let config = {
+//       method: "get",
+//       rejectUnauthorized: false,
+//       maxBodyLength: Infinity,
+//       url: "https://api.gateway.attomdata.com/propertyapi/v1.0.0/valuation/homeequity",
+//       headers: headers,
+//       params:query,
+//     };
+//     const property = await axios.request(config);
+//     res.json({
+//       property,
+//     });
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).send(err);
+//   }
+// };
+
 module.exports = {
   listProperties,
   editProperties,
   addProperties,
   getProperty,
-  listPropertiesByType
+  // priceEvaluation,
+  listPropertiesByType,
 };

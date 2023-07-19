@@ -1,0 +1,11 @@
+const favourite = require('../controllers/Favourite')
+const { authenticateJWT, authenticateJWTAdmin } = require('../middlewares.js')
+const router = require('express').Router()
+router.post('/',authenticateJWT,favourite.addFavourite)
+router.get('/',favourite.listFavourite)
+router.get('/getById/:id',favourite.getFavourite)
+router.get('/getByUser/:user',favourite.getFavouriteByUser)
+// router.get('/:id',favourite.listfavouritePropertiesByType)
+router.put('/removeItem',authenticateJWT ,favourite.removeProperty)
+router.put('/emptyfavourite/:id',authenticateJWT ,favourite.emptyFavourite)
+module.exports = router

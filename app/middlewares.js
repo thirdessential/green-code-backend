@@ -2,7 +2,6 @@ const { JWT_SECRET } = require("./constansts");
 const jwt = require("jsonwebtoken");
 const authenticateJWT = (req, res, next) => {
     const authHeader = req.headers.authorization;
-
     if (authHeader) {
         const token = authHeader.split(' ')[1];
 
@@ -10,8 +9,9 @@ const authenticateJWT = (req, res, next) => {
             if (err) {
                 return res.sendStatus(403);
             }
-
+            
             req.user = user;
+            console.log(user)
             next();
         });
     } else {
@@ -20,11 +20,11 @@ const authenticateJWT = (req, res, next) => {
 };
 const authenticateJWTAdmin = (req, res, next) => {
     const authHeader = req.headers.authorization;
-
     if (authHeader) {
         const token = authHeader.split(' ')[1];
-
+        
         jwt.verify(token, JWT_SECRET, (err, user) => {
+            console.log(user)
             if (err) {
                 return res.sendStatus(403);
             }

@@ -7,6 +7,15 @@ const pino = require('pino-http')()
 const multer = require("multer");
 const upload = require('./config/multer');
 const properties = require('./routes/properties.js');
+const roles = require('./routes/role');
+const agent = require('./routes/agent');
+const Faqs = require('./routes/faqs');
+const Articles = require('./routes/Articles');
+const Search = require('./routes/Search');
+const helpRequest = require('./routes/helpRequest');
+const favourite = require('./routes/favourite')
+const ContactForm = require('./routes/ContactForm');
+const requestTour = require('./routes/RequestTour');
 app.use(cors());
 app.use(cors({
   origin: 'http://localhost:3000'
@@ -26,6 +35,15 @@ app.get('/', (req,res)=>{
 app.use(bodyParser.json())
 app.use('/api/v1/me', users)
 app.use('/api/v1/properties',properties )
+app.use('/api/v1/role',roles )
+app.use('/api/v1/agent',agent )
+app.use('/api/v1/favourite',favourite )
+app.use('/api/v1/faqs',Faqs )
+app.use('/api/v1/articles',Articles )
+app.use('/api/v1/search',Search)
+app.use('/api/v1/help-request',helpRequest )
+app.use('/api/v1/contactForm',ContactForm )
+app.use('/api/v1/requestTour',requestTour )
 app.post("/api/v1/single", upload.single("image"), (req, res) => {
     if (req.file) {
       res.send({sttaus:"Single file uploaded successfully",file:req.file});

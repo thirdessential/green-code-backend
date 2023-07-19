@@ -6,6 +6,7 @@ const { hashPassword, signJwt, GenrateOtp } = require("../utility");
 const { mailOptions, mail } = require("../config/email");
 const admin = require("../config/firebase")
 const getMe = async (req, res) => {
+	console.log(req.user)
 	try {
 
 		const user = await userService.getById(req.user.userId)
@@ -103,17 +104,10 @@ const login = async (req, res) => {
 		// read username and password from request body
 		const { username, password } = req.body;
 		const user = await userService.getUserByUsername(username)
-
-
-
-
 		// filter user from the users array by username and password
-
-
 		if (user) {
 			if (user.provider !== "default") {
 				return res.status(400).send(`User Already Registerd with ${user.provider}`);
-
 
 			}
 			bcrypt.compare(password, user.password, async function (err, isMatch) {

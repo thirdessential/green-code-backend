@@ -16,6 +16,11 @@ const Properties = new mongoose.Schema(
       type: String,
       required: [true, "enter valid property name"],
     },
+    seller: {
+      type: String,
+      ref: "Users",
+      index: true,
+    },
     description: {
       type: String,
     },
@@ -33,20 +38,27 @@ const Properties = new mongoose.Schema(
     },
     status: {
       type: String,
-      default: "vacant",
-      required: true,
     },
     size: {
       type: Number,
-      required: [true, "enter valid property  size in sqm"],
+      required: [true, "enter valid property size in sqm"],
     },
     isActive: {
       type: Boolean,
       default: true,
     },
+    built_in: {
+      type: String,
+    },
     price: {
       type: Number,
       required: [true, "enter valid property price"],
+    },
+    basement_fit: {
+      type: Number,
+    },
+    garage_fit: {
+      type: Number,
     },
     address: {
       fullAddress: {
@@ -67,11 +79,11 @@ const Properties = new mongoose.Schema(
       },
 
       lat: {
-        type: String,
+        type: Number,
         required: [true, "enter valid property latitue"],
       },
       long: {
-        type: String,
+        type: Number,
         required: [true, "enter valid property longitute"],
       },
     },
@@ -80,6 +92,27 @@ const Properties = new mongoose.Schema(
         type: String,
       },
     ],
+    views: [
+      {
+        type: String,
+      },
+    ],
+    saves: [
+      {
+        type: String,
+      },
+    ],
+    features: [
+      {
+        type: String,
+      },
+    ],
+    model: {
+      type: String,
+    },
+    url: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
@@ -103,8 +136,21 @@ async function list(opts = {}) {
   return record;
 }
 async function listByType(body, opts = {}) {
-  const { name, type, noOfBeds, noOfBathrooms, status, size, price, city } =
-    body;
+  const {
+    name,
+    type,
+    noOfBeds,
+    noOfBathrooms,
+    status,
+    features,
+    minSize,
+    maxSize,
+    maxprice,
+    minprice,
+    maxYear,
+    minYear,
+    city,
+  } = body;
   let record = null;
   const filter = {
     $and: [
@@ -113,22 +159,24 @@ async function listByType(body, opts = {}) {
         : {},
       name ? { name: { $regex: new RegExp(name), $options: "i" } } : {},
       type ? { type } : {},
+      features ? { features: { $in: features } } : {},
       status ? { status } : {},
-      noOfBeds ? { noOfBeds } : {},
-      noOfBathrooms ? { noOfBathrooms } : {},
-      size ? { size: { $lte: size } } : {},
-      price ? { price: { $lte: price } } : {},
+      noOfBeds ? { noOfBeds: { $gte: noOfBeds } } : {},
+      noOfBathrooms ? { noOfBathrooms: { $gte: noOfBathrooms } } : {},
+      maxSize ? { size: { $lte: maxSize } } : {},
+      minSize ? { size: { $gte: minSize } } : {},
+      maxprice ? { price: { $lte: maxprice } } : {},
+      minprice ? { price: { $gte: minprice } } : {},
+      maxYear ? { built_in: { $lte: maxYear } } : {},
+      minYear ? { built_in: { $gte: minYear } } : {},
     ],
   };
 
   var options = {
-   
     lean: true,
     page: 1,
     limit: 10,
   };
-
-  console.log(options);
   await Model.paginate(filter, options, async (err, result) => {
     record = result;
   });
@@ -141,8 +189,12 @@ async function create(fields) {
 }
 
 async function getById(_id) {
-  const model = await Model.findOne({ _id: _id });
-  console.log("getbyid", model);
+  const model = await Model.findOne({ _id: _id }).populate([
+    {
+      path: "seller",
+    },
+  ]);
+
   return model;
 }
 
