@@ -57,8 +57,15 @@ const Properties = new mongoose.Schema(
     basement_fit: {
       type: Number,
     },
+    noOfGarage: {
+      type: Number,
+    },
     garage_fit: {
       type: Number,
+    },
+    likes: {
+      type: Number,
+      default:0
     },
     address: {
       fullAddress: {
@@ -175,11 +182,13 @@ async function listByType(body, opts = {}) {
   var options = {
     lean: true,
     page: 1,
-    limit: 10,
+    limit: 20,
   };
   await Model.paginate(filter, options, async (err, result) => {
-    record = result;
+      record = result;
   });
+ 
+console.log(record)
   return record;
 }
 async function create(fields) {

@@ -17,7 +17,7 @@ now.setMinutes(now.getMinutes() - newmin);
     dbString = `mongodb+srv://nitish3rde:Roopesh_123@thirdessntional.om9tz.mongodb.net/${dbName}?retryWrites=true&w=majority` //devesh Cluster
     mongoose.connect(
       process.env.MONGO_URI || dbString,
-      { useNewUrlParser: true, useUnifiedTopology: true }
+      { useNewUrlParser: true, useUnifiedTopology: true  }
     )
     
  

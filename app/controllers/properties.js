@@ -12,7 +12,7 @@ const listProperties = async (req, res) => {
   }
 };
 const listPropertiesByType = async (req, res) => {
-  console.log(req.query);
+ 
   try {
     const { query } = req;
     const properties = await propertiesService.listByType(query);

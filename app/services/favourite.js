@@ -3,6 +3,7 @@ const opts = { toJSON: { virtuals: true } };
 const shortid = require("shortid");
 const mongoose = require("mongoose");
 const User = require("../services/user");
+const Property = require("../services/properties");
 const mongoosePaginate = require("mongoose-paginate-v2");
 const Favourite = new mongoose.Schema(
   {
@@ -62,13 +63,16 @@ async function getByUser(_id) {
 
 async function create(fields) {
   const model = await getByUser(fields.user);
- 
+
   if (model) {
     model.property = [...model.property, fields.property];
     await model.save();
     const userModel = await User.getById(fields.user);
+    const propertyModel = await Property.getById(fields.property);
+    propertyModel.likes = propertyModel.likes + 1;
     userModel.liked_properties = model.property;
     await userModel.save();
+    await propertyModel.save();
     return userModel;
   } else {
     const newModel = new Model(fields);
