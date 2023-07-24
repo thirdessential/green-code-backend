@@ -80,6 +80,7 @@ async function create(fields) {
     const userModel = await User.getById(fields.user);
     userModel.liked_properties = model.property;
     await userModel.save();
+    
     return userModel;
   }
 }
@@ -94,6 +95,9 @@ async function removeItem(body) {
   const userModel = await User.getById(body.user);
   userModel.liked_properties = model.property;
   await userModel.save();
+  const propertyModel = await Property.getById(body.property);
+  propertyModel.likes = propertyModel.likes - 1;
+  await propertyModel.save();
   return userModel;
 }
 async function empty(id) {
