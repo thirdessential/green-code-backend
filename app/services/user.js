@@ -50,7 +50,7 @@ const User = new mongoose.Schema(
       type: String,
       default: "",
     },
-    role: { type: String, ref: "Roles", index: true, required: [true] },
+    role: { type: String, ref: "Roles", index: true },
     password: {
       type: String,
     },

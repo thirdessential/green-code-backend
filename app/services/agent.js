@@ -3,6 +3,7 @@ const { isEmail } = require("validator");
 const opts = { toJSON: { virtuals: true } };
 const shortid = require("shortid");
 const mongoose = require("mongoose");
+const Property = require("./properties");
 const mongoosePaginate = require("mongoose-paginate-v2");
 const Agent = new mongoose.Schema(
   {
@@ -42,6 +43,13 @@ const Agent = new mongoose.Schema(
     organization_size: {
       type: String,
     },
+    properties: [
+      {
+        type: String,
+        ref: "Properties",
+        index: true,
+      },
+    ],
   },
   { timestamps: true }
 );
@@ -70,6 +78,15 @@ async function create(fields) {
   await model.save();
   return model;
 }
+async function takeProperty(fields) {
+  const model = await Model.findOne({ _id: fields._id });
+  model.properties = [...model.properties, fields.property];
+  await model.save();
+  const propertyModel = await Property.getById({ _id: fields.property });
+  propertyModel.agent = fields._id;
+  await propertyModel.save();
+  return model;
+}
 
 async function getById(_id) {
   const model = await Model.findOne({ _id: _id }).populate([
@@ -96,5 +113,6 @@ module.exports = {
   edit,
   list,
   getById,
+  takeProperty,
   model: Model,
 };

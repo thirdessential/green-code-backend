@@ -120,6 +120,11 @@ const Properties = new mongoose.Schema(
     url: {
       type: String,
     },
+    agent:{
+      type: String,
+      ref: "Agent",
+      index: true,
+    }
   },
   { timestamps: true }
 );
