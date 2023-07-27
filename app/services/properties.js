@@ -54,6 +54,10 @@ const Properties = new mongoose.Schema(
       type: Number,
       required: [true, "enter valid property price"],
     },
+    monthly_price: {
+      type: Number,
+     
+    },
     basement_fit: {
       type: Number,
     },

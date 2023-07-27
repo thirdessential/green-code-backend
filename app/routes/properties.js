@@ -6,6 +6,7 @@ router.post('/',authenticateJWT,properties.addProperties)
 router.get('/',properties.listProperties)
 router.get('/getByType',properties.listPropertiesByType)
 router.get('/getById/:id',properties.getProperty)
+router.get('/nearby-schools',properties.getNearBySchools)
 // router.get('/priceValuation',properties.priceEvaluation)
 router.put('/:id',authenticateJWT ,properties.editProperties)
 module.exports = router

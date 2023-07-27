@@ -60,6 +60,17 @@ const editProperties = async (req, res) => {
   }
 };
 
+const getNearBySchools=async (req, res) => {
+  try {
+    const response = await axios.get(req.query.url);
+    console.log(response)
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error fetching data:', error.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
 // const priceEvaluation = async (req, res) => {
 //   try {
 //     const { query, headers } = req;
@@ -86,6 +97,7 @@ module.exports = {
   editProperties,
   addProperties,
   getProperty,
+  getNearBySchools,
   // priceEvaluation,
   listPropertiesByType,
 };
