@@ -4,6 +4,7 @@ const db = require("../config/db");
 const opts = { toJSON: { virtuals: true } };
 const shortid = require("shortid");
 const mongoose = require("mongoose");
+const PriceHistory = require("./PriceHistory");
 const mongoosePaginate = require("mongoose-paginate-v2");
 const Properties = new mongoose.Schema(
   {
@@ -54,9 +55,12 @@ const Properties = new mongoose.Schema(
       type: Number,
       required: [true, "enter valid property price"],
     },
+    tax: {
+      type: Number,
+      required: [true],
+    },
     monthly_price: {
       type: Number,
-     
     },
     basement_fit: {
       type: Number,
@@ -69,7 +73,7 @@ const Properties = new mongoose.Schema(
     },
     likes: {
       type: Number,
-      default:0
+      default: 0,
     },
     address: {
       fullAddress: {
@@ -124,11 +128,11 @@ const Properties = new mongoose.Schema(
     url: {
       type: String,
     },
-    agent:{
+    agent: {
       type: String,
       ref: "Agent",
       index: true,
-    }
+    },
   },
   { timestamps: true }
 );
@@ -194,15 +198,26 @@ async function listByType(body, opts = {}) {
     limit: 20,
   };
   await Model.paginate(filter, options, async (err, result) => {
-      record = result;
+    record = result;
   });
- 
-console.log(record)
+
+  console.log(record);
   return record;
 }
 async function create(fields) {
   const model = new Model(fields);
   await model.save();
+  const data = {
+    property: model._id,
+    history: {
+      price: model.price,
+      tax: model.tax,
+      monthly_price: model.monthly_price,
+    },
+  };
+  console.log(data);
+  const priceHistoryModel = PriceHistory.create(data);
+  // await priceHistoryModel.save()
   return model;
 }
 
@@ -222,7 +237,23 @@ const edit = async (id, change) => {
     model[key] = change[key];
   });
   await model.save();
+  if (
+    Object.keys(change).includes("price") ||
+    Object.keys(change).includes("tax") ||
+    Object.keys(change).includes("monthly_price")
+  ) {
+    const priceHistoryModel = await PriceHistory.getByPropertyId(id);
 
+    priceHistoryModel.history = [
+      ...priceHistoryModel.history,
+      {
+        price: change.price ? change.price : "",
+        tax: change.tax ? change.tax : "",
+        monthly_price: change.monthly_price ? change.monthly_price : "",
+      },
+    ];
+    await priceHistoryModel.save();
+  }
   return model;
 };
 
