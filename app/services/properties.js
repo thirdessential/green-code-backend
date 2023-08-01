@@ -105,6 +105,7 @@ const Properties = new mongoose.Schema(
     images: [
       {
         type: String,
+        required:true
       },
     ],
     views: [
@@ -120,6 +121,7 @@ const Properties = new mongoose.Schema(
     features: [
       {
         type: String,
+        required:true
       },
     ],
     model: {
@@ -155,6 +157,17 @@ async function list(opts = {}) {
   });
   return record;
 }
+const getAddressType = (value) => {
+  const cityRegex = /^[a-zA-Z\s-]+$/;
+  const pincodeRegex = /^\d+$/;
+  if (cityRegex.test(value)) {
+    return "address.city";
+  } else if (pincodeRegex.test(value)) {
+    return "address.pincode";
+  } else {
+    return "address.fullAddress";
+  }
+};
 async function listByType(body, opts = {}) {
   const {
     name,
@@ -171,11 +184,13 @@ async function listByType(body, opts = {}) {
     minYear,
     city,
   } = body;
+  var addressType = getAddressType(city);
+
   let record = null;
   const filter = {
     $and: [
       city
-        ? { "address.city": { $regex: new RegExp(city), $options: "i" } }
+        ? { [addressType]: city }
         : {},
       name ? { name: { $regex: new RegExp(name), $options: "i" } } : {},
       type ? { type } : {},
@@ -191,7 +206,7 @@ async function listByType(body, opts = {}) {
       minYear ? { built_in: { $gte: minYear } } : {},
     ],
   };
-
+console.log(filter)
   var options = {
     lean: true,
     page: 1,
@@ -201,7 +216,6 @@ async function listByType(body, opts = {}) {
     record = result;
   });
 
-  console.log(record);
   return record;
 }
 async function create(fields) {
