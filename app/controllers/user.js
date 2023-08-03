@@ -5,6 +5,8 @@ const bcrypt = require("bcrypt");
 const { hashPassword, signJwt, GenrateOtp } = require("../utility");
 const { mailOptions, mail } = require("../config/email");
 const admin = require("../config/firebase")
+const {OAuth2Client} = require('google-auth-library');
+const {GOOGLE_CLIENT_ID} =require('../constansts')
 const getMe = async (req, res) => {
 	console.log(req.user)
 	try {
@@ -186,7 +188,7 @@ const socialAuth = async (req, res) => {
 		let { body } = req
 
 		const data = await admin.auth().verifyIdToken(body.token);
-
+        console.log(data)
 		const oldData = await userService.getUserByUsername(data.email)
 		console.log(oldData)
 		if (oldData) {
@@ -202,6 +204,7 @@ const socialAuth = async (req, res) => {
 				email: data.email,
 				name: data.name,
 				uid: data.uid,
+				isProfileCompleted:false,
 				provider: data?.firebase?.sign_in_provider
 
 			})
@@ -215,6 +218,50 @@ const socialAuth = async (req, res) => {
 
 
 	}
+	catch (err) {
+		console.log(err)
+		res.status(500).send(err)
+	}
+}
+const socialAuthOneTap = async (req, res) => {
+	try {
+		let { body } = req
+        
+		const client = new OAuth2Client();
+		const ticket = await client.verifyIdToken({
+			idToken: body.token,
+			audience: GOOGLE_CLIENT_ID, 
+			
+		});
+		const payload = ticket.getPayload();
+		const oldData = await userService.getUserByUsername(payload.email)
+		console.log("oldData",oldData)
+		if (oldData) {
+			const token = await signJwt(oldData)
+			res.status(200).send({
+				user: oldData,
+				access_token: token
+			})
+		} else {
+			const newUser = await userService.create({
+				emailVerified: true,
+				email: payload.email,
+				name: payload.name,
+				isProfileCompleted:false,
+				// uid: data.uid,
+				provider: 'google'
+
+			})
+			const token = await signJwt(newUser)
+
+			res.status(201).send({
+				user: newUser,
+				access_token: token
+			})
+		}
+
+	}
+	
 	catch (err) {
 		console.log(err)
 		res.status(500).send(err)
@@ -307,6 +354,8 @@ const newPassword = async (req, res) => {
 		res.status(500).send(err)
 	}
 }
+
+
 module.exports = {
 	createUser,
 	getMe,
@@ -316,5 +365,6 @@ module.exports = {
 	verifyOtp,
 	socialAuth,
 	newPassword,
-	updateUser
+	updateUser,
+	socialAuthOneTap
 }

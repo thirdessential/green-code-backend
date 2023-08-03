@@ -7,6 +7,7 @@ router.post('/login',users.login)
 router.post('/sentOtp',users.sendOtp)
 router.post('/verifyOtp',users.verifyOtp)
 router.post('/socialAuth',users.socialAuth)
+router.post('/socialAuth/oneTap',users.socialAuthOneTap)
 router.post('/sentResetOtp',users.sendOtpResetPassword)
 router.post('/newPassword',users.newPassword)
 

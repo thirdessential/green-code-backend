@@ -77,7 +77,10 @@ const User = new mongoose.Schema(
       {
         type:String
       }
-    ]
+    ],
+    isProfileCompleted:{
+      type:Boolean,
+    }
   },
   { timestamps: true }
 );
@@ -101,6 +104,7 @@ async function getById(_id) {
   ]);;
   return model;
 }
+
 async function getUserByUsername(username) {
   const model = await Model.findOne({
     $or: [{ phone: username }, { email: username }],
@@ -126,5 +130,6 @@ module.exports = {
   getUserByUsername,
   edit,
   getById,
+ 
   model: Model,
 };
