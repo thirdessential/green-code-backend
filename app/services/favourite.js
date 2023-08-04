@@ -61,6 +61,29 @@ async function getByUser(_id) {
   return model;
 }
 
+async function listByType(body, opts = {}) {
+  const { id, status } = body;
+  console.log(body, "body");
+  const model = await Model.findOne({ user: id }).populate([
+    {
+      path: "user",
+    },
+    {
+      path: "property",
+    },
+  ]);
+  console.log(model);
+  if(status){
+    const filteredProperty = model.property.filter(
+      (item) => item.status === status
+    );
+    return filteredProperty;
+  }
+  else{
+    return model.property
+  }
+}
+
 async function create(fields) {
   const model = await getByUser(fields.user);
 
@@ -80,7 +103,7 @@ async function create(fields) {
     const userModel = await User.getById(fields.user);
     userModel.liked_properties = model.property;
     await userModel.save();
-    
+
     return userModel;
   }
 }
@@ -141,5 +164,6 @@ module.exports = {
   getByUser,
   removeItem,
   empty,
+  listByType,
   model: Model,
 };

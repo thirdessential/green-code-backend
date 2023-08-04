@@ -6,6 +6,7 @@ const shortid = require("shortid");
 const mongoose = require("mongoose");
 const PriceHistory = require("./PriceHistory");
 const mongoosePaginate = require("mongoose-paginate-v2");
+const cities = require("./cities");
 const Properties = new mongoose.Schema(
   {
     _id: {
@@ -105,7 +106,7 @@ const Properties = new mongoose.Schema(
     images: [
       {
         type: String,
-        required:true
+        required: true,
       },
     ],
     views: [
@@ -121,7 +122,7 @@ const Properties = new mongoose.Schema(
     features: [
       {
         type: String,
-        required:true
+        required: true,
       },
     ],
     model: {
@@ -183,15 +184,14 @@ async function listByType(body, opts = {}) {
     maxYear,
     minYear,
     city,
+    lat,
+    long,
   } = body;
   var addressType = getAddressType(city);
-
   let record = null;
   const filter = {
     $and: [
-      city
-        ? { [addressType]: city }
-        : {},
+      city ? { [addressType]: city } : {},
       name ? { name: { $regex: new RegExp(name), $options: "i" } } : {},
       type ? { type } : {},
       features ? { features: { $in: features } } : {},
@@ -204,9 +204,11 @@ async function listByType(body, opts = {}) {
       minprice ? { price: { $gte: minprice } } : {},
       maxYear ? { built_in: { $lte: maxYear } } : {},
       minYear ? { built_in: { $gte: minYear } } : {},
+      lat ? { "address.lat": { $gte: lat - 10, $lte: lat + 10 } } : {},
+      long ? { "address.long": { $gte: long - 10, $lte: long + 10 } } : {},
     ],
   };
-console.log(filter)
+
   var options = {
     lean: true,
     page: 1,
@@ -215,7 +217,6 @@ console.log(filter)
   await Model.paginate(filter, options, async (err, result) => {
     record = result;
   });
-
   return record;
 }
 async function create(fields) {
@@ -229,9 +230,14 @@ async function create(fields) {
       monthly_price: model.monthly_price,
     },
   };
-  console.log(data);
-  const priceHistoryModel = PriceHistory.create(data);
-  // await priceHistoryModel.save()
+   PriceHistory.create(data);
+  const cityData={
+    name:model.address.city,
+    category:model.status
+  }
+  console.log(cityData);
+  const cityModel = cities.create(cityData);
+ 
   return model;
 }
 

@@ -18,6 +18,7 @@ const ContactForm = require('./routes/ContactForm');
 const requestTour = require('./routes/RequestTour');
 const priceHistory = require('./routes/PriceHistory');
 const payment = require('./routes/Payment');
+const cities = require('./routes/Cities');
 app.use(cors());
 app.use(cors({
   origin: 'http://localhost:3000'
@@ -48,6 +49,7 @@ app.use('/api/v1/contactForm',ContactForm )
 app.use('/api/v1/requestTour',requestTour )
 app.use('/api/v1/Pricehistory',priceHistory )
 app.use('/api/v1/Payment',payment )
+app.use('/api/v1/cities',cities )
 app.post("/api/v1/single", upload.single("image"), (req, res) => {
     if (req.file) {
       res.send({sttaus:"Single file uploaded successfully",file:req.file});

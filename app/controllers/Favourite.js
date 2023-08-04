@@ -1,3 +1,4 @@
+const favourite = require("../services/favourite");
 const Favourite = require("../services/favourite");
 
 const listFavourite = async (req, res) => {
@@ -25,7 +26,21 @@ const listFavourite = async (req, res) => {
 //       res.status(500).send(err);
 //     }
 //   };
+const listFavouriteByType = async (req, res) => {
+ 
+  try {
+    const { query } = req;
+    const favourite = await Favourite.listByType(query);
 
+    // const product = await getProduct(id)
+    res.status(201).send({
+      favourite,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err);
+  }
+};
 const getFavourite = async (req, res) => {
  
   try {
@@ -49,6 +64,7 @@ const getFavouriteByUser = async (req, res) => {
     res.status(500).send(err);
   }
 };
+
 const addFavourite = async (req, res) => {
   try {
     const { body } = req;
@@ -89,5 +105,5 @@ module.exports = {
   getFavourite,
   removeProperty,
   getFavouriteByUser,
-//   listCartPropertiesByType
+  listFavouriteByType
 };
