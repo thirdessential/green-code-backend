@@ -23,6 +23,12 @@ const Tour = new mongoose.Schema(
       index: true,
       required: [true],
     },
+    property: {
+      type: String,
+      ref: "Agent",
+      index: true,
+      required: [true],
+    },
     time: {
       type: String,
     },
@@ -69,6 +75,9 @@ async function getById(_id) {
     {
       path: "agent",
     },
+    {
+      path: "property",
+    },
   ]);
 
   return model;
@@ -81,6 +90,9 @@ const getByAgent = async (id) => {
     },
     {
       path: "user",
+    },
+    {
+      path: "property",
     },
   ]);
 
