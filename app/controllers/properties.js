@@ -1,5 +1,6 @@
 const propertiesService = require("../services/properties");
 const axios = require("axios");
+const cheerio = require("cheerio");
 const listProperties = async (req, res) => {
   try {
     const properties = await propertiesService.list();
@@ -12,7 +13,6 @@ const listProperties = async (req, res) => {
   }
 };
 const listPropertiesByType = async (req, res) => {
- 
   try {
     const { query } = req;
     const properties = await propertiesService.listByType(query);
@@ -60,16 +60,16 @@ const editProperties = async (req, res) => {
   }
 };
 
-const getNearBySchools=async (req, res) => {
+const getNearBySchools = async (req, res) => {
   try {
     const response = await axios.get(req.query.url);
-    console.log(response)
+    console.log(response);
     res.json(response.data);
   } catch (error) {
-    console.error('Error fetching data:', error.message);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error fetching data:", error.message);
+    res.status(500).json({ error: "Internal server error" });
   }
-}
+};
 
 // const priceEvaluation = async (req, res) => {
 //   try {
@@ -98,6 +98,7 @@ module.exports = {
   addProperties,
   getProperty,
   getNearBySchools,
+  fetch,
   // priceEvaluation,
   listPropertiesByType,
 };

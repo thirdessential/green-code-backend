@@ -58,7 +58,7 @@ const Properties = new mongoose.Schema(
     },
     tax: {
       type: Number,
-      required: [true],
+     
     },
     monthly_price: {
       type: Number,
@@ -236,8 +236,12 @@ async function create(fields) {
     category:model.status
   }
   console.log(cityData);
-  const cityModel = cities.create(cityData);
- 
+  const cityModel =await cities.list()
+  const cityDocs=cityModel.docs.filter((item)=>item.name===cityData.name)
+  if(cityDocs.length===0){
+    cities.create(cityData);
+  }
+  
   return model;
 }
 

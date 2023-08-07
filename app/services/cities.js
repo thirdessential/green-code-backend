@@ -11,6 +11,7 @@ const Cities = new mongoose.Schema(
     },
     name: {
       type: String,
+      unique:[true]
     },
     category: {
       type: String,
