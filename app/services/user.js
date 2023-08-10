@@ -73,14 +73,21 @@ const User = new mongoose.Schema(
     uid: {
       type: String,
     },
-    liked_properties:[
+    liked_properties: [
       {
-        type:String
-      }
+        type: String,
+        unique: true,
+      },
     ],
-    isProfileCompleted:{
-      type:Boolean,
-    }
+    hidden_properties: [
+      {
+        type: String,
+        unique: true,
+      },
+    ],
+    isProfileCompleted: {
+      type: Boolean,
+    },
   },
   { timestamps: true }
 );
@@ -96,12 +103,12 @@ async function create(fields) {
   return model;
 }
 async function getById(_id) {
-  console.log(_id)
+  console.log(_id);
   const model = await Model.findOne({ _id }).populate([
     {
       path: "role",
     },
-  ]);;
+  ]);
   return model;
 }
 
@@ -130,6 +137,6 @@ module.exports = {
   getUserByUsername,
   edit,
   getById,
- 
+
   model: Model,
 };

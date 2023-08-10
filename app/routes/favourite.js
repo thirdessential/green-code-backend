@@ -8,5 +8,5 @@ router.get('/getByUser/:user',favourite.getFavouriteByUser)
 router.get('/getByType',favourite.listFavouriteByType)
 // router.get('/:id',favourite.listfavouritePropertiesByType)
 router.put('/removeItem',authenticateJWT ,favourite.removeProperty)
-router.put('/emptyfavourite/:id',authenticateJWT ,favourite.emptyFavourite)
+router.put('/emptyfavourite',authenticateJWT ,favourite.emptyFavourite)
 module.exports = router

@@ -68,6 +68,7 @@ const getFavouriteByUser = async (req, res) => {
 const addFavourite = async (req, res) => {
   try {
     const { body } = req;
+    console.log(body)
     const favourite = await Favourite.create(body);
     res.status(200).json(favourite);
   } catch (err) {
@@ -86,8 +87,9 @@ const removeProperty = async (req, res) => {
   }
 };
 const emptyFavourite = async (req, res) => {
+  console.log("res",req)
   try {
-    const { id } = req.params;
+    const { id } = req.body;
     const favourite = await Favourite.empty(id);
     res.json({
       favourite,
