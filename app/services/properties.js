@@ -40,6 +40,7 @@ const Properties = new mongoose.Schema(
     },
     status: {
       type: String,
+      default:'Sale'
     },
     size: {
       type: Number,

@@ -1,6 +1,5 @@
 const propertiesService = require("../services/properties");
 const axios = require("axios");
-const cheerio = require("cheerio");
 const listProperties = async (req, res) => {
   try {
     const properties = await propertiesService.list();
@@ -98,7 +97,6 @@ module.exports = {
   addProperties,
   getProperty,
   getNearBySchools,
-  fetch,
   // priceEvaluation,
   listPropertiesByType,
 };
