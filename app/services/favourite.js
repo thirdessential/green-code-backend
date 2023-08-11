@@ -73,6 +73,7 @@ async function listByType(body, opts = {}) {
     },
   ]);
   console.log(model);
+  if(model){
   if(status){
     const filteredProperty = model.property.filter(
       (item) => item.status === status
@@ -82,6 +83,10 @@ async function listByType(body, opts = {}) {
   else{
     return model.property
   }
+}
+else{
+  return []
+}
 }
 
 async function create(fields) {

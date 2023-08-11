@@ -73,15 +73,20 @@ async function listByType(body, opts = {}) {
     },
   ]);
   console.log(model);
-  if(status){
-    const filteredProperty = model.property.filter(
-      (item) => item.status === status
-    );
-    return filteredProperty;
-  }
-  else{
-    return model.property
-  }
+  if(model){
+    if(status){
+      const filteredProperty = model.property.filter(
+        (item) => item.status === status
+        );
+        return filteredProperty;
+      }
+      else{
+        return model.property
+      }
+    }
+    else{
+      return []
+    }
 }
 
 async function create(fields) {
