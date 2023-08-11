@@ -281,6 +281,11 @@ const edit = async (id, change) => {
   }
   return model;
 };
+const remove = async (id) => {
+  const model = await getById(id);
+  await Model.deleteOne(model)
+
+}
 
 module.exports = {
   create,
@@ -288,5 +293,6 @@ module.exports = {
   list,
   getById,
   listByType,
+  remove,
   model: Model,
 };

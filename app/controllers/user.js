@@ -355,6 +355,20 @@ const newPassword = async (req, res) => {
 	}
 }
 
+const listUsers = async (req, res) => {
+	console.log("reaq",req.headers.authorization)
+	try {
+	  const user = await userService.list();
+	  res.json({
+		user,
+	  });
+	} catch (err) {
+	  console.log(err);
+	  res.status(500).send(err);
+	}
+  };
+  
+
 
 module.exports = {
 	createUser,
@@ -366,5 +380,5 @@ module.exports = {
 	socialAuth,
 	newPassword,
 	updateUser,
-	socialAuthOneTap
+	socialAuthOneTap,listUsers
 }

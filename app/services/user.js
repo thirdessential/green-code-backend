@@ -96,6 +96,21 @@ User.plugin(mongoosePaginate);
 
 const Model = db.model("Users", User);
 
+async function list(opts = {}) {
+  let record = null;
+  var options = {
+    sort: { createdAt: -1 },
+    lean: true,
+    page: 1,
+    limit: 10,
+  };
+
+  await Model.paginate({}, options, async (err, result) => {
+    record = result;
+  });
+  return record;
+}
+
 async function create(fields) {
   const model = new Model(fields);
   if (fields.password) await hashPassword(model);
@@ -137,6 +152,6 @@ module.exports = {
   getUserByUsername,
   edit,
   getById,
-
+  list,
   model: Model,
 };

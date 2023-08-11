@@ -36,6 +36,17 @@ const getProperty = async (req, res) => {
     res.status(500).send(err);
   }
 };
+const deleteProperty = async (req, res) => {
+  try {
+    const property = await propertiesService.remove(req.params.id);
+    res.status(201).send({
+      property,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err);
+  }
+};
 const addProperties = async (req, res) => {
   try {
     const { body } = req;
@@ -97,6 +108,7 @@ module.exports = {
   addProperties,
   getProperty,
   getNearBySchools,
+  deleteProperty,
   // priceEvaluation,
   listPropertiesByType,
 };

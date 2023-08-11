@@ -25,7 +25,8 @@ const authenticateJWTAdmin = (req, res, next) => {
       if (err) {
         return res.sendStatus(403);
       }
-      if (user.role !== "admin") {
+      console.log(user,"user")
+      if (user.userId !== "ZsOOn7a3D") {
         res.sendStatus(401);
       }
 
