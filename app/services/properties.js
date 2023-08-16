@@ -190,7 +190,32 @@ async function listByType(body, opts = {}) {
   var addressType = getAddressType(city);
   console.log({ $regex: new RegExp(city), $options: "i" });
   let record = null;
-  const filter = {
+  var filter
+  if (addressType === "address.pincode") {
+   filter = {
+    $and: [
+      city
+        ? { [addressType]: city }
+        : {},
+      name ? { name: { $regex: new RegExp(name), $options: "i" } } : {},
+      type ? { type } : {},
+      features ? { features: { $in: features } } : {},
+      status ? { status } : {},
+      noOfBeds ? { noOfBeds: { $gte: noOfBeds } } : {},
+      noOfBathrooms ? { noOfBathrooms: { $gte: noOfBathrooms } } : {},
+      maxSize ? { size: { $lte: maxSize } } : {},
+      minSize ? { size: { $gte: minSize } } : {},
+      maxprice ? { price: { $lte: maxprice } } : {},
+      minprice ? { price: { $gte: minprice } } : {},
+      maxYear ? { built_in: { $lte: maxYear } } : {},
+      minYear ? { built_in: { $gte: minYear } } : {},
+      lat ? { "address.lat": { $gte: lat - 10, $lte: lat + 10 } } : {},
+      long ? { "address.long": { $gte: long - 10, $lte: long + 10 } } : {},
+    ],
+  };
+}
+else{
+  filter = {
     $and: [
       city
         ? { [addressType]: { $regex: new RegExp(city), $options: "i" } }
@@ -211,6 +236,7 @@ async function listByType(body, opts = {}) {
       long ? { "address.long": { $gte: long - 10, $lte: long + 10 } } : {},
     ],
   };
+}
 
   var options = {
     lean: true,
