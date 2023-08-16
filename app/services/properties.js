@@ -40,7 +40,7 @@ const Properties = new mongoose.Schema(
     },
     status: {
       type: String,
-      default:'Sale'
+      default: "Sale",
     },
     size: {
       type: Number,
@@ -59,7 +59,6 @@ const Properties = new mongoose.Schema(
     },
     tax: {
       type: Number,
-     
     },
     monthly_price: {
       type: Number,
@@ -189,10 +188,13 @@ async function listByType(body, opts = {}) {
     long,
   } = body;
   var addressType = getAddressType(city);
+  console.log({ $regex: new RegExp(city), $options: "i" });
   let record = null;
   const filter = {
     $and: [
-      city ? { [addressType]: city } : {},
+      city
+        ? { [addressType]: { $regex: new RegExp(city), $options: "i" } }
+        : {},
       name ? { name: { $regex: new RegExp(name), $options: "i" } } : {},
       type ? { type } : {},
       features ? { features: { $in: features } } : {},
@@ -220,6 +222,36 @@ async function listByType(body, opts = {}) {
   });
   return record;
 }
+async function suggestedProp(body, opts = {}) {
+  const { city } = body;
+  var addressType = getAddressType(city);
+  console.log(addressType);
+  let record = null;
+  var filter;
+  if (addressType === "address.pincode") {
+    filter = {
+      $and: [city ? { [addressType]: city } : {}],
+    };
+  } else {
+    filter = {
+      $and: [
+        city
+          ? { [addressType]: { $regex: new RegExp(city), $options: "i" } }
+          : {},
+      ],
+    };
+  }
+
+  var options = {
+    lean: true,
+    page: 1,
+    limit: 20,
+  };
+  await Model.paginate(filter, options, async (err, result) => {
+    record = result;
+  });
+  return record;
+}
 async function create(fields) {
   const model = new Model(fields);
   await model.save();
@@ -231,18 +263,18 @@ async function create(fields) {
       monthly_price: model.monthly_price,
     },
   };
-   PriceHistory.create(data);
-  const cityData={
-    name:model.address.city,
-    category:model.status
-  }
+  PriceHistory.create(data);
+  const cityData = {
+    name: model.address.city,
+    category: model.status,
+  };
   console.log(cityData);
-  const cityModel =await cities.list()
-  const cityDocs=cityModel.docs.filter((item)=>item.name===cityData.name)
-  if(cityDocs.length===0){
+  const cityModel = await cities.list();
+  const cityDocs = cityModel.docs.filter((item) => item.name === cityData.name);
+  if (cityDocs.length === 0) {
     cities.create(cityData);
   }
-  
+
   return model;
 }
 
@@ -283,9 +315,8 @@ const edit = async (id, change) => {
 };
 const remove = async (id) => {
   const model = await getById(id);
-  await Model.deleteOne(model)
-
-}
+  await Model.deleteOne(model);
+};
 
 module.exports = {
   create,
@@ -294,5 +325,6 @@ module.exports = {
   getById,
   listByType,
   remove,
+  suggestedProp,
   model: Model,
 };

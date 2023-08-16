@@ -25,6 +25,20 @@ const listPropertiesByType = async (req, res) => {
     res.status(500).send(err);
   }
 };
+const listSuggestedProperties = async (req, res) => {
+  try {
+    const { query } = req;
+    const properties = await propertiesService.suggestedProp(query);
+
+    // const product = await getProduct(id)
+    res.status(201).send({
+      properties,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err);
+  }
+};
 const getProperty = async (req, res) => {
   try {
     const property = await propertiesService.getById(req.params.id);
@@ -109,6 +123,7 @@ module.exports = {
   getProperty,
   getNearBySchools,
   deleteProperty,
+  listSuggestedProperties,
   // priceEvaluation,
   listPropertiesByType,
 };
