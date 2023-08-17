@@ -10,24 +10,30 @@ const AdminPermission = new mongoose.Schema(
       required: true,
       default: shortid.generate,
     },
-    mainImg: {
-      type: String,
+    heroSection: {
+      title: String,
+      backgroundImg: String,
     },
-    mainHeadline: {
-      type: String,
+    seeMoreSection: {
+      item1: {
+        title: String,
+        backgroundImg: String,
+        buttonText: String,
+      },
+      item2: {
+        title: String,
+        backgroundImg: String,
+        buttonText: String,
+      },
+      item3: {
+        title: String,
+        backgroundImg: String,
+        buttonText: String,
+      }
     },
-    buyhome_bgImage: {
-      type: String,
-    },
-    sellhome_bgImage: {
-      type: String,
-    },
-    renthome_bgImage: {
-      type: String,
-    },
-    footer_desc: {
-      type: String,
-    },
+    footerSection: {
+        descriptionText: String
+    }
   },
   { timestamps: true }
 );
@@ -37,14 +43,14 @@ AdminPermission.plugin(mongoosePaginate);
 const Model = db.model("AdminPermission", AdminPermission);
 
 async function list(opts = {}) {
-    const model = await Model.findOne();
-    return model 
+  const model = await Model.findOne();
+  return model;
 }
 
 async function create(fields) {
   var model;
   const isModel = await Model.find();
- 
+
   if (isModel.length === 0) {
     model = new Model(fields);
     await model.save();
