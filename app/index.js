@@ -20,6 +20,7 @@ const priceHistory = require('./routes/PriceHistory');
 const payment = require('./routes/Payment');
 const cities = require('./routes/Cities');
 const Hidden = require('./routes/HiddenProperty');
+const AdminPermission = require('./routes/AdminPermission');
 app.use(cors());
 app.use(cors({
   origin: 'http://localhost:3000'
@@ -52,6 +53,7 @@ app.use('/api/v1/Pricehistory',priceHistory )
 app.use('/api/v1/Payment',payment )
 app.use('/api/v1/cities',cities )
 app.use('/api/v1/hidden',Hidden )
+app.use('/api/v1/adminPermission',AdminPermission )
 app.post("/api/v1/single", upload.single("image"), (req, res) => {
     if (req.file) {
       res.send({sttaus:"Single file uploaded successfully",file:req.file});
