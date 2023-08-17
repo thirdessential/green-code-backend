@@ -56,21 +56,31 @@ const Properties = new mongoose.Schema(
     price: {
       type: Number,
       required: [true, "enter valid property price"],
+
     },
     tax: {
       type: Number,
+      default:0
     },
     monthly_price: {
       type: Number,
+      default:0
+
     },
     basement_fit: {
       type: Number,
+      default:0
+
     },
     noOfGarage: {
       type: Number,
+      default:0
+  
     },
     garage_fit: {
       type: Number,
+      default:0
+
     },
     likes: {
       type: Number,
@@ -188,6 +198,7 @@ async function listByType(body, opts = {}) {
     long,
   } = body;
   var addressType = getAddressType(city);
+  console.log("address",addressType)
   console.log({ $regex: new RegExp(city), $options: "i" });
   let record = null;
   var filter
@@ -218,7 +229,7 @@ else{
   filter = {
     $and: [
       city
-        ? { [addressType]: { $regex: new RegExp(city), $options: "i" } }
+        ? { [addressType]: {$regex: new RegExp(city), $options: "i"} }
         : {},
       name ? { name: { $regex: new RegExp(name), $options: "i" } } : {},
       type ? { type } : {},
@@ -262,7 +273,10 @@ async function suggestedProp(body, opts = {}) {
     filter = {
       $and: [
         city
-          ? { [addressType]: { $regex: new RegExp(city), $options: "i" } }
+          ? { $or: [
+            { "address.city": {$regex: new RegExp(city), $options: "i"} },
+            { "address.fullAddress": { $regex: new RegExp(city, "i") } }
+          ]}
           : {},
       ],
     };
