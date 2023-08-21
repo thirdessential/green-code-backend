@@ -51,7 +51,7 @@ const Properties = new mongoose.Schema(
       default: true,
     },
     built_in: {
-      type: String,
+      type: Number,
     },
     price: {
       type: Number,
@@ -197,9 +197,9 @@ async function listByType(body, opts = {}) {
     lat,
     long,
   } = body;
+  console.log(body.features,"body")
   var addressType = getAddressType(city);
-  console.log("address",addressType)
-  console.log({ $regex: new RegExp(city), $options: "i" });
+ 
   let record = null;
   var filter
   if (addressType === "address.pincode") {
@@ -218,8 +218,8 @@ async function listByType(body, opts = {}) {
       minSize ? { size: { $gte: minSize } } : {},
       maxprice ? { price: { $lte: maxprice } } : {},
       minprice ? { price: { $gte: minprice } } : {},
-      maxYear ? { built_in: { $lte: maxYear } } : {},
-      minYear ? { built_in: { $gte: minYear } } : {},
+      body.maxYear ? { built_in: { $lte: maxYear } } : {},
+      body.minYear ? { built_in: { $gte: minYear } } : {},
       lat ? { "address.lat": { $gte: lat - 10, $lte: lat + 10 } } : {},
       long ? { "address.long": { $gte: long - 10, $lte: long + 10 } } : {},
     ],
@@ -241,8 +241,8 @@ else{
       minSize ? { size: { $gte: minSize } } : {},
       maxprice ? { price: { $lte: maxprice } } : {},
       minprice ? { price: { $gte: minprice } } : {},
-      maxYear ? { built_in: { $lte: maxYear } } : {},
-      minYear ? { built_in: { $gte: minYear } } : {},
+      body.maxYear ? { built_in: { $lte: maxYear } } : {},
+      body.minYear ? { built_in: { $gte: minYear } } : {},
       lat ? { "address.lat": { $gte: lat - 10, $lte: lat + 10 } } : {},
       long ? { "address.long": { $gte: long - 10, $lte: long + 10 } } : {},
     ],
